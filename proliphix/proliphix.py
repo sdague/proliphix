@@ -57,7 +57,7 @@ def _get_oid(name):
 
 def _all_oids():
     """Build a query string for all the OIDS we have."""
-    return "&".join([("OID" + x + "=") for x in OIDS.keys()])
+    return "&".join([("OID" + x + "=") for x in sorted(OIDS.keys())])
 
 
 class PDP(object):

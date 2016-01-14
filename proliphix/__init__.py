@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#
 # Copyright 2016 Sean Dague
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,7 +15,7 @@
 # under the License.
 
 # for convenience
-from proliphix import PDP
+from proliphix.proliphix import PDP
 
 __author__ = 'Sean Dague'
 __email__ = 'sean@dague.net'

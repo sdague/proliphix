@@ -15,7 +15,7 @@ Proliphix Thermostat Control
 
 Python Boilerplate contains all the boilerplate you need to create a Python package.
 
-* Free software: ISC license
+* Free software: Apache 2
 * Documentation: https://proliphix.readthedocs.org.
 
 Features
