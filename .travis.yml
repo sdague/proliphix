@@ -10,7 +10,6 @@ deploy:
   provider: pypi
   user: sdague
 env:
-- TOXENV=py35
 - TOXENV=py34
 install: pip install -U tox
 language: python
