@@ -15,7 +15,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    'requests'
 ]
 
 test_requirements = [
@@ -25,7 +25,7 @@ test_requirements = [
 setup(
     name='proliphix',
     version='0.1.0',
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="API for Proliphix nt10e network thermostat.",
     long_description=readme + '\n\n' + history,
     author="Sean Dague",
     author_email='sean@dague.net',
@@ -37,17 +37,14 @@ setup(
                  'proliphix'},
     include_package_data=True,
     install_requires=requirements,
-    license="ISCL",
+    license="Apache v2",
     zip_safe=False,
     keywords='proliphix',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: ISC License (ISCL)',
+        'License :: OSI Approved :: Apache V2',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
