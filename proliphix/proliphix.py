@@ -39,12 +39,16 @@ OIDS = {
     '4.1.5': 'SetbackHeat',
     '4.1.6': 'SetbackCool',
     '4.1.2': 'HvacState',
+    '4.1.1': 'HvacMode',
     '4.1.11': 'CurrentClass',
     '4.5.1': 'Heat1Usage',
     '4.5.3': 'Cool1Usage',
     '4.5.5': 'FanUsage',
     '4.5.6': 'LastUsageReset'
 }
+
+HVAC_MODE_HEAT = 2
+HVAC_MODE_COOL = 3
 
 
 def _get_oid(name):
@@ -101,8 +105,30 @@ class PDP(object):
         requests.post(url, auth=(self._user, self._passwd), data=form_data)
 
     @property
+    def is_cooling(self):
+        return int(self._data['HvacMode']) == HVAC_MODE_COOL
+
+    @property
+    def is_heating(self):
+        return int(self._data['HvacMode']) == HVAC_MODE_HEAT
+
+    @property
     def cur_temp(self):
         return float(self._data['AverageTemp']) / 10
+
+    @property
+    def setback(self):
+        if self.is_cooling:
+            return self.setback_cool
+        elif self.is_heating:
+            return self.setback_heat
+
+    @setback.setter
+    def setback(self, val):
+        if self.is_cooling:
+            return self.setback_cool(val)
+        elif self.is_heating:
+            return self.setback_heat(val)
 
     @property
     def setback_heat(self):
@@ -112,6 +138,15 @@ class PDP(object):
     def setback_heat(self, val):
         self._data['SetbackHeat'] = int(val * 10)
         self._set(SetbackHeat=self._data['SetbackHeat'])
+
+    @property
+    def setback_cool(self):
+        return float(self._data['SetbackCool']) / 10
+
+    @setback_cool.setter
+    def setback_cool(self, val):
+        self._data['SetbackCool'] = int(val * 10)
+        self._set(SetbackCool=self._data['SetbackCool'])
 
     @property
     def hvac_state(self):
