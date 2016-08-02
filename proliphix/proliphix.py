@@ -25,6 +25,7 @@ https://github.com/sdague/thermostat.rb/blob/master/docs/PDP_API_R1_11.pdf
 
 import logging
 import requests
+import time
 from urllib.parse import urlencode
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ logger = logging.getLogger(__name__)
 # be expanded over time.
 OIDS = {
     '1.2': 'DevName',
+    '2.5.1': 'Time',
     '4.1.13': 'AverageTemp',
     '4.1.4': 'FanState',
     '4.1.5': 'SetbackHeat',
@@ -85,13 +87,26 @@ class PDP(object):
         url = "http://%s/get" % self._host
         data = _all_oids()
         r = requests.post(url, auth=(self._user, self._passwd), data=data)
+        self._data['Time'] = 0
         for line in r.text.split('&'):
             if line:
                 oid, value = line.split('=')
                 const = OIDS.get(oid[3:])
                 if const:
                     self._data[const] = value
+        self._clock_drift()
         logger.debug("PDP collected data %s" % self._data)
+
+    def _clock_drift(self):
+        now = int(time.time())
+        if time.daylight == 1:
+            now -= time.altzone
+        else:
+            now -= time.timezone
+        self._data['ActualTime'] = now
+        drift = self._data['ActualTime'] - self._data['Time']
+        if drift > 60:
+            logger.warning("PDP time drifted by %d seconds" % drift)
 
     def _set(self, **kwargs):
         data = {}
