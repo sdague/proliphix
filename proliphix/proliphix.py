@@ -99,14 +99,21 @@ class PDP(object):
 
     def _clock_drift(self):
         now = int(time.time())
+        # the clock on the proliphix is weird, and keeps track of DST
+        # in a separate bit. They are clearly running the hardware
+        # clock on localtime, which is a terrible idea. But this means
+        # that regardless on what we think the drift is, we have to
+        # set it like it's in standard time.
+        set_now = now - time.timezone
         if time.daylight == 1:
             now -= time.altzone
         else:
             now -= time.timezone
         self._data['ActualTime'] = now
-        drift = self._data['ActualTime'] - self._data['Time']
+        drift = self._data['ActualTime'] - int(self._data['Time'])
         if drift > 60:
-            logger.warning("PDP time drifted by %d seconds" % drift)
+            logger.warning("PDP time drifted by %d seconds, resetting" % drift)
+            self._set(Time=set_now)
 
     def _set(self, **kwargs):
         data = {}
