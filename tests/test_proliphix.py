@@ -28,8 +28,11 @@ class TestProliphix(unittest.TestCase):
         self.assertEqual('4.1.13', px._get_oid('AverageTemp'))
         self.assertEqual(None, px._get_oid('AverageTemp2'))
 
+    # we don't want to actually do the clock drift work during tests
+    # here.
+    @mock.patch('proliphix.PDP._clock_drift')
     @mock.patch('requests.post')
-    def test_update(self, rp):
+    def test_update(self, rp, cd):
         pdp = proliphix.PDP(mock.sentinel.host,
                             mock.sentinel.user,
                             mock.sentinel.passwd)
