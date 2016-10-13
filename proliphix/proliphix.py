@@ -148,9 +148,11 @@ class PDP(object):
     @setback.setter
     def setback(self, val):
         if self.is_cooling:
-            return self.setback_cool(val)
+            self.setback_cool = val
+            return self.setback_cool
         elif self.is_heating:
-            return self.setback_heat(val)
+            self.setback_heat = val
+            return self.setback_heat
 
     @property
     def setback_heat(self):
