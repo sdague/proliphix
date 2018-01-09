@@ -40,8 +40,9 @@ class TestProliphix(unittest.TestCase):
         rp.assert_called_once_with(
             "http://%s/get" % mock.sentinel.host,
             auth=(mock.sentinel.user, mock.sentinel.passwd),
-            data=('OID1.2=&OID2.5.1=&OID4.1.1=&OID4.1.11=&OID4.1.13'
-                  '=&OID4.1.2=&OID4.1.4=&OID4.1.5='
+            data=('OID1.10.9=&OID1.2=&OID2.5.1=&OID2.7.1=&OID4.1.1=&OID4.1.11='
+                  '&OID4.1.13=&OID4.1.14='
+                  '&OID4.1.2=&OID4.1.4=&OID4.1.5='
                   '&OID4.1.6=&OID4.5.1=&OID4.5.3=&OID4.5.5=&OID4.5.6=')
             )
 

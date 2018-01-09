@@ -35,6 +35,8 @@ logger = logging.getLogger(__name__)
 # be expanded over time.
 OIDS = {
     '1.2': 'DevName',
+    '1.10.9': 'SiteName',
+    '2.7.1': 'ModelName',
     '2.5.1': 'Time',
     '4.1.13': 'AverageTemp',
     '4.1.4': 'FanState',
@@ -46,7 +48,8 @@ OIDS = {
     '4.5.1': 'Heat1Usage',
     '4.5.3': 'Cool1Usage',
     '4.5.5': 'FanUsage',
-    '4.5.6': 'LastUsageReset'
+    '4.5.6': 'LastUsageReset',
+    '4.1.14': 'RelHumidity'
 }
 
 HVAC_MODE_HEAT = 2
@@ -141,6 +144,10 @@ class PDP(object):
         return float(self._data['AverageTemp']) / 10
 
     @property
+    def humidity(self):
+        return int(self._data['RelHumidity'])
+
+    @property
     def setback(self):
         if self.is_cooling:
             return self.setback_cool
@@ -180,7 +187,7 @@ class PDP(object):
 
     @property
     def name(self):
-        return self._data['DevName']
+        return "%s:%s" % (self._data['SiteName'], self._data['DevName'])
 
     @property
     def fan_state(self):
