@@ -116,7 +116,7 @@ class PDP(object):
         self._data['ActualTime'] = now
         drift = self._data['ActualTime'] - int(self._data['Time'])
 
-        if drift > 60:
+        if abs(drift) > 60:
             logger.warning("PDP time drifted by %d seconds, resetting" % drift)
             self._set(Time=set_now)
 
