@@ -14,6 +14,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# Changes/Additions added by Dwayne Zechman 6-Aug-2022
+#   to add features necessary for Home Assistant integration
+# - Added the following OID's
+#   > 1.8 : SerialNum
+#   > 4.1.3 : FanMode
+# - Sorted the declaration of the OID's by number (okay this is just my OCD)
+# - Added 2 additional constants for HVACMode
+# - Added new property hvac_mode (R/W) to expose OID 4.1.1 directly in the API
+# - Added setter for property hvac_state to make it R/W
+# - Added new property serial_num (R/O) to expose OID 1.8 directly in the API
+# - Added new property model (R/O) to expose OID 2.7.1 directly in the API
+# - Added new property fan_mode (R/W) to expost OID 4.1.3 directly in the API
+#
+# This update was tested on the NT20e thermostat
+#
 """Proliphix Network Thermostat
 
 The Proliphix NT10e Thermostat is an ethernet connected thermostat. It
@@ -35,25 +50,29 @@ logger = logging.getLogger(__name__)
 # be expanded over time.
 OIDS = {
     '1.2': 'DevName',
+    '1.8': 'SerialNum',
     '1.10.9': 'SiteName',
-    '2.7.1': 'ModelName',
     '2.5.1': 'Time',
-    '4.1.13': 'AverageTemp',
+    '2.7.1': 'ModelName',
+    '4.1.1': 'HvacMode',
+    '4.1.2': 'HvacState',
+    '4.1.3': 'FanMode',
     '4.1.4': 'FanState',
     '4.1.5': 'SetbackHeat',
     '4.1.6': 'SetbackCool',
-    '4.1.2': 'HvacState',
-    '4.1.1': 'HvacMode',
     '4.1.11': 'CurrentClass',
+    '4.1.13': 'AverageTemp',
+    '4.1.14': 'RelHumidity',
     '4.5.1': 'Heat1Usage',
     '4.5.3': 'Cool1Usage',
     '4.5.5': 'FanUsage',
-    '4.5.6': 'LastUsageReset',
-    '4.1.14': 'RelHumidity'
+    '4.5.6': 'LastUsageReset'
 }
 
+HVAC_MODE_OFF = 1
 HVAC_MODE_HEAT = 2
 HVAC_MODE_COOL = 3
+HVAC_MOVE_AUTO = 4
 
 
 def _get_oid(name):
@@ -140,6 +159,15 @@ class PDP(object):
         return int(self._data['HvacMode']) == HVAC_MODE_HEAT
 
     @property
+    def hvac_mode(self):
+        return int(self._data['HvacMode'])
+
+    @hvac_mode.setter
+    def hvac_mode(self, val):
+        self._data['HvacMode'] = int(val)
+        self._set(HvacMode=self._data['HvacMode'])
+
+    @property
     def cur_temp(self):
         return float(self._data['AverageTemp']) / 10
 
@@ -185,9 +213,22 @@ class PDP(object):
     def hvac_state(self):
         return int(self._data['HvacState'])
 
+    @hvac_state.setter
+    def hvac_state(self, val):
+        self._data['HvacState'] = int(val)
+        self._set(HvacState=self._data['HvacState'])
+
     @property
     def name(self):
         return "%s:%s" % (self._data['SiteName'], self._data['DevName'])
+
+    @property
+    def serial_num(self):
+        return self._data['SerialNum']
+
+    @property
+    def model(self):
+        return self._data['ModelName']
 
     @property
     def fan_state(self):
@@ -195,3 +236,12 @@ class PDP(object):
             return "On"
         else:
             return "Off"
+
+    @property
+    def fan_mode(self):
+        return int(self._data['FanMode'])
+
+    @fan_mode.setter
+    def fan_mode(self, val):
+        self._data['FanMode'] = int(val)
+        self._set(FanMode=self._data['FanMode'])
